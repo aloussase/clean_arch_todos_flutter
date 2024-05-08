@@ -1,16 +1,8 @@
-# clean_arch_todos_flutter
+# Clean Architecture ToDos in Flutter
 
-A new Flutter project.
+In this project we implement a ToDos client application using Flutter and
+Clean Architecure.
 
-## Getting Started
+- Watch the live making of this on Twitch: https://twitch.tv/aloussase
+- Watch the recordings on YouTube: https://youtube.com/@aloussase
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
