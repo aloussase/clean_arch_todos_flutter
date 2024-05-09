@@ -1,48 +1,97 @@
 import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fpdart/fpdart.dart';
+
+import '../../domain/use_case/login_use_case.dart';
 
 sealed class LoginEvent {}
 
-final class UsernameChanged extends LoginEvent {
+final class OnUsernameChanged extends LoginEvent {
   final String value;
-  UsernameChanged(this.value);
+  OnUsernameChanged(this.value);
 }
 
-final class PasswordChanged extends LoginEvent {
+final class OnPasswordChanged extends LoginEvent {
   final String value;
-  PasswordChanged(this.value);
+  OnPasswordChanged(this.value);
 }
+
+final class OnLogin extends LoginEvent {}
 
 final class LoginState {
   String username;
   String password;
 
-  LoginState({required this.username, required this.password});
+  LoginState({
+    required this.username,
+    required this.password,
+  });
 
   factory LoginState.empty() => LoginState(
         username: "",
         password: "",
       );
+
+  LoginState copyWith({String? username, String? password, String? error}) =>
+      LoginState(
+        username: username ?? this.username,
+        password: password ?? this.password,
+      );
 }
 
 final class LoginViewModel extends Bloc<LoginEvent, LoginState> {
-  LoginViewModel() : super(LoginState.empty()) {
-    on<UsernameChanged>(_onUsernameChanged);
-    on<PasswordChanged>(_onPasswordChanged);
+  final LoginUseCase _loginUseCase;
+
+  final StreamController<String> _errors = StreamController<String>();
+  Stream<String> get errors => _errors.stream;
+
+  void dispose() => _errors.close();
+
+  LoginViewModel(this._loginUseCase) : super(LoginState.empty()) {
+    on<OnUsernameChanged>(_onUsernameChanged);
+    on<OnPasswordChanged>(_onPasswordChanged);
+    on<OnLogin>(_onLogin);
+  }
+
+  FutureOr<void> _onLogin(OnLogin evt, Emitter<LoginState> emit) async {
+    final result = await _loginUseCase(
+      state.username,
+      state.password,
+    );
+
+    switch (result) {
+      case Left(value: LoginError.usernameIsEmpty):
+        _errors.add("The username cannot be empty");
+      case Left(value: LoginError.passwordIsEmpty):
+        _errors.add("The password cannot be empty");
+      case Left(value: LoginError.serverError):
+        _errors.add("There was a server error");
+      case Right(value: final accessToken):
+        // TODO: Use a logging library.
+        print(accessToken);
+    }
   }
 
   FutureOr<void> _onUsernameChanged(
-    UsernameChanged evt,
+    OnUsernameChanged evt,
     Emitter<LoginState> emit,
   ) {
-    print("Username changed: " + evt.value);
+    emit(
+      state.copyWith(
+        username: evt.value,
+      ),
+    );
   }
 
   FutureOr<void> _onPasswordChanged(
-    PasswordChanged evt,
+    OnPasswordChanged evt,
     Emitter<LoginState> emit,
   ) {
-    print("Password changed: " + evt.value);
+    emit(
+      state.copyWith(
+        password: evt.value,
+      ),
+    );
   }
 }
