@@ -9,11 +9,13 @@ sealed class LoginEvent {}
 
 final class OnUsernameChanged extends LoginEvent {
   final String value;
+
   OnUsernameChanged(this.value);
 }
 
 final class OnPasswordChanged extends LoginEvent {
   final String value;
+
   OnPasswordChanged(this.value);
 }
 
@@ -43,7 +45,8 @@ final class LoginState {
 final class LoginViewModel extends Bloc<LoginEvent, LoginState> {
   final LoginUseCase _loginUseCase;
 
-  final StreamController<String> _errors = StreamController<String>();
+  final StreamController<String> _errors = StreamController<String>.broadcast();
+
   Stream<String> get errors => _errors.stream;
 
   void dispose() => _errors.close();

@@ -6,11 +6,12 @@ sealed class SnackbarEvent {}
 
 final class OnSnackbarMessage extends SnackbarEvent {
   final String message;
+
   OnSnackbarMessage({required this.message});
 }
 
 final class SnackbarViewModel extends Bloc<SnackbarEvent, void> {
-  final _controller = StreamController<String>();
+  final _controller = StreamController<String>.broadcast();
 
   SnackbarViewModel() : super(null) {
     on<OnSnackbarMessage>((evt, _) {

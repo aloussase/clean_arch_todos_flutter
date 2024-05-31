@@ -18,11 +18,15 @@ final class AuthRepositoryImpl implements AuthRepository {
   Future<String?> login(String username, String password) async {
     final response = await _client.post(
       Uri.parse("$API_BASE/login"),
-      body: {
-        "username": username,
-        "password": password,
-      },
+      body: jsonEncode(
+        {
+          "username": username,
+          "password": password,
+        },
+      ),
+      headers: {'Content-Type': 'application/json'},
     );
+
     final jsonBody = jsonDecode(response.body);
     final accessToken = jsonBody["token"];
 
@@ -34,6 +38,20 @@ final class AuthRepositoryImpl implements AuthRepository {
     );
 
     return accessToken;
+  }
+
+  @override
+  Future<void> register(String username, String password) async {
+    await _client.post(
+      Uri.parse("$API_BASE/register"),
+      body: jsonEncode(
+        {
+          "username": username,
+          "password": password,
+        },
+      ),
+      headers: {'Content-Type': 'application/json'},
+    );
   }
 
   @override

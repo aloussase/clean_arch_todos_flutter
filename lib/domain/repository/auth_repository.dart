@@ -17,6 +17,9 @@ abstract class AuthRepository {
   /// @return The access token if successful.
   Future<String?> login(String username, String password);
 
+  /// Perform registration
+  Future<void> register(String username, String password);
+
   /// Dispose of this AuthRepository.
   void dispose() {}
 }

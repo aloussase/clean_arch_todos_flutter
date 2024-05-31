@@ -1,8 +1,10 @@
 import 'package:clean_arch_todos_flutter/data/repository/auth_repository_impl.dart';
 import 'package:clean_arch_todos_flutter/domain/repository/auth_repository.dart';
 import 'package:clean_arch_todos_flutter/domain/use_case/login_use_case.dart';
+import 'package:clean_arch_todos_flutter/domain/use_case/register_use_case.dart';
 import 'package:clean_arch_todos_flutter/ui/viewmodel/auth_view_model.dart';
 import 'package:clean_arch_todos_flutter/ui/viewmodel/login_view_model.dart';
+import 'package:clean_arch_todos_flutter/ui/viewmodel/register_view_model.dart';
 import 'package:get_it/get_it.dart';
 import "package:http/http.dart" as http;
 import 'package:http/http.dart';
@@ -20,6 +22,9 @@ void setup() {
 
   getIt.registerSingleton<LoginUseCase>(LoginUseCase(getIt()));
   getIt.registerSingleton<LoginViewModel>(LoginViewModel(getIt()));
+
+  getIt.registerSingleton<RegisterUseCase>(RegisterUseCase(getIt()));
+  getIt.registerSingleton<RegisterViewModel>(RegisterViewModel(getIt()));
 
   getIt.registerSingleton<SnackbarViewModel>(SnackbarViewModel());
 

@@ -1,5 +1,6 @@
 import 'package:clean_arch_todos_flutter/ui/pages/splash_page.dart';
 import 'package:clean_arch_todos_flutter/ui/viewmodel/login_view_model.dart';
+import 'package:clean_arch_todos_flutter/ui/viewmodel/register_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -40,6 +41,7 @@ class _TodosAppState extends State<TodosApp> {
         BlocProvider<SnackbarViewModel>(create: (_) => _snackBarViewModel),
         BlocProvider<LoginViewModel>(create: (_) => _loginViewModel),
         BlocProvider<AuthViewModel>(create: (_) => di.getIt()),
+        BlocProvider<RegisterViewModel>(create: (_) => di.getIt()),
       ],
       child: const TodosAppView(),
     );
@@ -78,7 +80,9 @@ final class _TodosAppViewState extends State<TodosAppView> {
                 );
               case Unauthenticated():
                 _navigator.pushAndRemoveUntil(
-                  MaterialPageRoute(builder: (_) => const LoginPage()),
+                  MaterialPageRoute(
+                    builder: (_) => LoginPage(navigator: _navigator),
+                  ),
                   (route) => false,
                 );
             }

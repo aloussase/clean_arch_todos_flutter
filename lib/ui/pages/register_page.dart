@@ -1,22 +1,22 @@
 import 'dart:async';
 
-import 'package:clean_arch_todos_flutter/ui/viewmodel/login_view_model.dart';
+import 'package:clean_arch_todos_flutter/ui/pages/login_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../viewmodel/register_view_model.dart';
 import '../viewmodel/snackbar_view_model.dart';
-import 'register_page.dart';
 
-class LoginPage extends StatefulWidget {
+class RegisterPage extends StatefulWidget {
   final NavigatorState navigator;
 
-  const LoginPage({required this.navigator, super.key});
+  const RegisterPage({required this.navigator, super.key});
 
   @override
-  State<StatefulWidget> createState() => _LoginPageState();
+  State<RegisterPage> createState() => _RegisterPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _RegisterPageState extends State<RegisterPage> {
   late final StreamSubscription _snackbarSubscription;
   late final StreamSubscription _errorsSubscription;
 
@@ -24,18 +24,21 @@ class _LoginPageState extends State<LoginPage> {
   void initState() {
     super.initState();
 
-    final loginViewModel = context.read<LoginViewModel>();
-    final snackbarViewModel = context.read<SnackbarViewModel>();
+    _snackbarSubscription = context.read<SnackbarViewModel>().messages.listen(
+      (message) {
+        final snackbar = SnackBar(content: Text(message));
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+        ScaffoldMessenger.of(context).showSnackBar(snackbar);
+      },
+    );
 
-    _snackbarSubscription = snackbarViewModel.messages.listen((message) {
-      final snackbar = SnackBar(content: Text(message));
-      ScaffoldMessenger.of(context).hideCurrentSnackBar();
-      ScaffoldMessenger.of(context).showSnackBar(snackbar);
-    });
-
-    _errorsSubscription = loginViewModel.errors.listen((error) {
-      snackbarViewModel.add(OnSnackbarMessage(message: error));
-    });
+    _errorsSubscription = context.read<RegisterViewModel>().errors.listen(
+      (error) {
+        context
+            .read<SnackbarViewModel>()
+            .add(OnSnackbarMessage(message: error));
+      },
+    );
   }
 
   @override
@@ -51,7 +54,7 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: const Text("Login"),
+        title: const Text("Register"),
       ),
       body: Center(
         child: Padding(
@@ -62,7 +65,7 @@ class _LoginPageState extends State<LoginPage> {
             children: <Widget>[
               const Center(
                 child: Text(
-                  "Login",
+                  "Register",
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
@@ -77,7 +80,9 @@ class _LoginPageState extends State<LoginPage> {
                   labelText: "Username",
                 ),
                 onChanged: (value) {
-                  context.read<LoginViewModel>().add(OnUsernameChanged(value));
+                  context
+                      .read<RegisterViewModel>()
+                      .add(OnUsernameChanged(value));
                 },
               ),
               const SizedBox(height: 6),
@@ -89,7 +94,9 @@ class _LoginPageState extends State<LoginPage> {
                   labelText: "Password",
                 ),
                 onChanged: (value) {
-                  context.read<LoginViewModel>().add(OnPasswordChanged(value));
+                  context
+                      .read<RegisterViewModel>()
+                      .add(OnPasswordChanged(value));
                 },
               ),
               const SizedBox(height: 6),
@@ -102,25 +109,25 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
                 onPressed: () {
-                  context.read<LoginViewModel>().add(OnLogin());
+                  context.read<RegisterViewModel>().add(OnRegister());
                 },
-                child: const Text("Login"),
+                child: const Text("Register"),
               ),
               const SizedBox(height: 8),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text("Don't have an account?"),
+                  const Text("Already have an account?"),
                   TextButton(
                     onPressed: () {
                       widget.navigator.push(
                         MaterialPageRoute(
                           builder: (_) =>
-                              RegisterPage(navigator: widget.navigator),
+                              LoginPage(navigator: widget.navigator),
                         ),
                       );
                     },
-                    child: const Text("Register"),
+                    child: const Text("Login"),
                   )
                 ],
               )
